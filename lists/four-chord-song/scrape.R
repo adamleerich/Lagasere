@@ -18,28 +18,25 @@ content <- html %>%
   html_element('div#content') %>% 
   html_element('div#bodyContent') %>% 
   html_element('div#mw-content-text') %>% 
-  html_element('div.mw-parser-output')
+  html_element('div.mw-parser-output') %>% 
+  html_children()
 
 
-content %>% 
-  as.list()
-
-
-
-  `[`(5) %>% 
-  html_children() %>% 
+text <- content[c(29, 31)] %>% 
   html_elements('li') %>% 
-  html_text
+  html_text()
 
-# table(nchar(text) - nchar(gsub('\\"', '', text)))
-text[which(nchar(text) - nchar(gsub('[ ]\226[ ]', '', text)) != 3)]
 
-text[text == "Minutemen \226 \"History Lesson – Part II\""] <- 
-  "Minutemen \226 \"History Lesson - Part II\""
+# Make sure there are only two quotes in each value
+(nchar(text) - nchar(gsub('\\"', '', text))) %>% 
+  table
 
-artist <- gsub('(.*)[ ]\226[ ]\\"(.*)\\"', '\\1', text)
-song <- gsub('(.*)[ ]\226[ ]\\"(.*)\\"', '\\2', text)
+
+pattern <- '^(.*)[ ]\226[ ]\\"(.*)\\".*$'
+
+artist <- gsub(pattern, '\\1', text)
+song <- gsub(pattern, '\\2', text)
 
 df <- data.frame(artist, song)
 
-write_csv(df, 'lists/pitchfork-500/pitchfork-500.csv')
+write_csv(df, 'lists/four-chord-song/four-chord-song.csv')
