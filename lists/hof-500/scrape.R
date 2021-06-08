@@ -23,33 +23,33 @@ lis <- body_text %>%
   html_elements('li')
 
 
-songs <- lis %>% 
+song <- lis %>% 
   html_elements('b') %>% 
   html_text()
 
-songs <- gsub('^\\?(.*)\\?$', '\\1', songs)
-songs <- gsub('\\?', '"', songs)
-songs <- gsub('&amp;', '&', songs)
+song <- gsub('^\\?(.*)\\?$', '\\1', song)
+song <- gsub('\\?', '"', song)
+song <- gsub('&amp;', '&', song)
 
 
 lis_text <- as.character(lis)
 
 p <- regexpr('[,]*\\s*<b>', lis_text)
-artists <- substring(lis_text, 1, p - 1)
+artist <- substring(lis_text, 1, p - 1)
 
-all(grepl('^<li>', artists))
+all(grepl('^<li>', artist))
 
-artists <- gsub('^<li>\\s*(.*)$', '\\1', artists)
-artists <- gsub('\\?', '"', artists)
-artists <- gsub('&amp;', '&', artists)
+artist <- gsub('^<li>\\s*(.*)$', '\\1', artist)
+artist <- gsub('\\?', '"', artist)
+artist <- gsub('&amp;', '&', artist)
 
-table(artists) %>% 
+table(artist) %>% 
   sort(decreasing = TRUE) %>% 
   `[`(1:10)
 
 df <- data.frame(
-  artists,
-  songs
+  artist,
+  song
 )
 
 write_csv(df, 'lists/hof-500/hof-500.csv')
